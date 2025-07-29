@@ -14,6 +14,9 @@ service SpageExecution {
   rpc CancelTask(CancelTaskRequest) returns (CancelTaskResponse);
   rpc GetTaskStatus(GetTaskStatusRequest) returns (GetTaskStatusResponse);
   
+  // Task registration and status updates
+  rpc RegisterTask(RegisterTaskRequest) returns (RegisterTaskResponse);
+  
   // Real-time progress streaming
   rpc StreamProgress(stream ProgressUpdate) returns (stream ProgressUpdate);
   
@@ -61,4 +64,21 @@ message GetTaskStatusRequest {
 message GetTaskStatusResponse {
   Task task = 1;
   Error error = 2;
+}
+
+// RegisterTaskRequest represents a request to register/update a task
+message RegisterTaskRequest {
+  string task_id = 1;
+  string playbook = 2;
+  string inventory = 3;
+  map<string, string> variables = 4;
+  string engine = 5;
+  map<string, string> metadata = 6;
+}
+
+// RegisterTaskResponse represents the response to a register task request
+message RegisterTaskResponse {
+  bool success = 1;
+  string task_id = 2;
+  Error error = 3;
 } 
