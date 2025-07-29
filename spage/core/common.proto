@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package spage.core;
 
-option go_package = "github.com/AlexanderGrooff/spage-daemon/proto/spage/core";
+option go_package = "github.com/AlexanderGrooff/spage-protobuf/spage/core";
 
 import "google/protobuf/timestamp.proto";
 

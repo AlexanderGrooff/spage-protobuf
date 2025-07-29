@@ -2,10 +2,10 @@ syntax = "proto3";
 
 package spage.api;
 
-option go_package = "github.com/AlexanderGrooff/spage-daemon/proto/spage/api";
+option go_package = "github.com/AlexanderGrooff/spage-protobuf/spage/api";
 
 import "google/protobuf/empty.proto";
-import "proto/spage/core/common.proto";
+import "spage/core/common.proto";
 
 // SpageAPI service handles communication between the Daemon and the API
 service SpageAPI {
