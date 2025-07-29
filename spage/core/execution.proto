@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package spage.core;
+
+option go_package = "github.com/AlexanderGrooff/spage-daemon/proto/spage/core";
+
+import "google/protobuf/empty.proto";
+import "proto/spage/core/common.proto";
+
+// SpageExecution service handles communication between Spage and the Daemon
+service SpageExecution {
+  // Task execution
+  rpc ExecuteTask(ExecuteTaskRequest) returns (ExecuteTaskResponse);
+  rpc CancelTask(CancelTaskRequest) returns (CancelTaskResponse);
+  rpc GetTaskStatus(GetTaskStatusRequest) returns (GetTaskStatusResponse);
+  
+  // Real-time progress streaming
+  rpc StreamProgress(stream ProgressUpdate) returns (stream ProgressUpdate);
+  
+  // Health and metrics
+  rpc HealthCheck(google.protobuf.Empty) returns (HealthStatus);
+  rpc GetMetrics(google.protobuf.Empty) returns (Metrics);
+}
+
+// ExecuteTaskRequest represents a request to execute a task
+message ExecuteTaskRequest {
+  string task_id = 1;
+  string playbook = 2;
+  string inventory = 3;
+  map<string, string> variables = 4;
+  string engine = 5; // "local_graph", "temporal", etc.
+  TaskPriority priority = 6;
+  map<string, string> metadata = 7;
+}
+
+// ExecuteTaskResponse represents the response to an execute task request
+message ExecuteTaskResponse {
+  bool success = 1;
+  string task_id = 2;
+  Error error = 3;
+}
+
+// CancelTaskRequest represents a request to cancel a task
+message CancelTaskRequest {
+  string task_id = 1;
+  string reason = 2;
+}
+
+// CancelTaskResponse represents the response to a cancel task request
+message CancelTaskResponse {
+  bool success = 1;
+  Error error = 2;
+}
+
+// GetTaskStatusRequest represents a request to get task status
+message GetTaskStatusRequest {
+  string task_id = 1;
+}
+
+// GetTaskStatusResponse represents the response with task status
+message GetTaskStatusResponse {
+  Task task = 1;
+  Error error = 2;
+} 
