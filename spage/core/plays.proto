@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package spage.core;
+
+option go_package = "github.com/AlexanderGrooff/spage-protobuf/spage/core";
+
+import "google/protobuf/timestamp.proto";
+import "spage/core/common.proto";
+
+// PlayStatus represents the status of a play
+enum PlayStatus {
+  PLAY_STATUS_UNSPECIFIED = 0;
+  PLAY_STATUS_PENDING = 1;
+  PLAY_STATUS_RUNNING = 2;
+  PLAY_STATUS_COMPLETED = 3;
+  PLAY_STATUS_FAILED = 4;
+  PLAY_STATUS_CANCELED = 5;
+}
+
+message PlayMetrics {
+  int32 total_tasks = 1;
+  int32 completed_tasks = 2;
+  int32 failed_tasks = 3;
+  int32 canceled_tasks = 4;
+  int32 skipped_tasks = 5;
+  int32 pending_tasks = 6;
+  int32 running_tasks = 7;
+}
+
+// SpagePlay represents a play with all its metadata
+message SpagePlay {
+  string id = 1;
+  string playbook = 2;
+  string inventory = 3;
+  map<string, string> variables = 4;
+  PlayStatus status = 5;
+  repeated SpageTask tasks = 6;
+  PlayMetrics metrics = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+  google.protobuf.Timestamp started_at = 10;
+  google.protobuf.Timestamp completed_at = 11;
+}

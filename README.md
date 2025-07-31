@@ -35,7 +35,7 @@ proto/
 **Purpose**: Communication between Spage core engine and the daemon for task execution.
 
 **Key Operations**:
-- `ExecuteTask()` - Start a new task execution
+- `ExecutePlay()` - Start a new task execution
 - `CancelTask()` - Cancel a running task
 - `GetTaskStatus()` - Get current task status
 - `StreamProgress()` - Real-time progress updates (bidirectional)

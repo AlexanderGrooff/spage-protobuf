@@ -6,17 +6,15 @@ option go_package = "github.com/AlexanderGrooff/spage-protobuf/spage/api";
 
 import "google/protobuf/empty.proto";
 import "spage/core/common.proto";
+import "spage/core/plays.proto";
 
 // SpageAPI service handles communication between the Daemon and the API
 service SpageAPI {
   // Task management
-  rpc SubmitTask(SubmitTaskRequest) returns (SubmitTaskResponse);
-  rpc GetTaskStatus(GetTaskStatusRequest) returns (GetTaskStatusResponse);
-  rpc CancelTask(CancelTaskRequest) returns (CancelTaskResponse);
-  rpc ListTasks(ListTasksRequest) returns (ListTasksResponse);
-  
-  // Real-time events
-  rpc StreamEvents(stream spage.core.Event) returns (stream spage.core.Event);
+  rpc SubmitPlay(SubmitPlayRequest) returns (SubmitPlayResponse);
+  rpc GetPlayStatus(GetPlayStatusRequest) returns (GetPlayStatusResponse);
+  rpc CancelPlay(CancelPlayRequest) returns (CancelPlayResponse);
+  rpc ListPlays(ListPlaysRequest) returns (ListPlaysResponse);
   
   // Authentication and authorization
   rpc Authenticate(AuthRequest) returns (AuthResponse);
@@ -24,59 +22,58 @@ service SpageAPI {
   
   // Health and metrics
   rpc HealthCheck(google.protobuf.Empty) returns (spage.core.HealthStatus);
-  rpc GetMetrics(google.protobuf.Empty) returns (spage.core.Metrics);
 }
 
-// SubmitTaskRequest represents a request to submit a task
-message SubmitTaskRequest {
-  string task_id = 1;
-  string type = 2;
-  spage.core.TaskPriority priority = 3;
-  map<string, string> payload = 4;
+// SubmitPlayRequest represents a request to submit a play
+message SubmitPlayRequest {
+  string play_id = 1;
+  string playbook = 2;
+  string inventory = 3;
+  map<string, string> variables = 4;
   map<string, string> metadata = 5;
 }
 
-// SubmitTaskResponse represents the response to a submit task request
-message SubmitTaskResponse {
+// SubmitPlayResponse represents the response to a submit play request
+message SubmitPlayResponse {
   bool success = 1;
-  string task_id = 2;
+  string play_id = 2;
   spage.core.Error error = 3;
 }
 
-// GetTaskStatusRequest represents a request to get task status
-message GetTaskStatusRequest {
-  string task_id = 1;
+// GetPlayStatusRequest represents a request to get play status
+message GetPlayStatusRequest {
+  string play_id = 1;
 }
 
-// GetTaskStatusResponse represents the response with task status
-message GetTaskStatusResponse {
-  spage.core.Task task = 1;
+// GetPlayStatusResponse represents the response with play status
+message GetPlayStatusResponse {
+  spage.core.SpagePlay play = 1;
   spage.core.Error error = 2;
 }
 
-// CancelTaskRequest represents a request to cancel a task
-message CancelTaskRequest {
-  string task_id = 1;
+// CancelPlayRequest represents a request to cancel a play
+message CancelPlayRequest {
+  string play_id = 1;
   string reason = 2;
 }
 
-// CancelTaskResponse represents the response to a cancel task request
-message CancelTaskResponse {
+// CancelPlayResponse represents the response to a cancel play request
+message CancelPlayResponse {
   bool success = 1;
   spage.core.Error error = 2;
 }
 
-// ListTasksRequest represents a request to list tasks
-message ListTasksRequest {
+// ListPlaysRequest represents a request to list plays
+message ListPlaysRequest {
   int32 limit = 1;
   int32 offset = 2;
   string status = 3;
   string type = 4;
 }
 
-// ListTasksResponse represents the response with a list of tasks
-message ListTasksResponse {
-  repeated spage.core.Task tasks = 1;
+// ListPlaysResponse represents the response with a list of plays
+message ListPlaysResponse {
+  repeated spage.core.SpagePlay plays = 1;
   int32 total = 2;
   spage.core.Error error = 3;
 }

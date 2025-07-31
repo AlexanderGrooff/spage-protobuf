@@ -6,71 +6,6 @@ option go_package = "github.com/AlexanderGrooff/spage-protobuf/spage/core";
 
 import "google/protobuf/timestamp.proto";
 
-// TaskStatus represents the status of a task
-enum TaskStatus {
-  TASK_STATUS_UNSPECIFIED = 0;
-  TASK_STATUS_PENDING = 1;
-  TASK_STATUS_RUNNING = 2;
-  TASK_STATUS_COMPLETED = 3;
-  TASK_STATUS_FAILED = 4;
-  TASK_STATUS_CANCELED = 5;
-}
-
-// TaskPriority represents the priority of a task
-enum TaskPriority {
-  TASK_PRIORITY_UNSPECIFIED = 0;
-  TASK_PRIORITY_LOW = 1;
-  TASK_PRIORITY_NORMAL = 2;
-  TASK_PRIORITY_HIGH = 3;
-  TASK_PRIORITY_CRITICAL = 4;
-}
-
-// Task represents a task with all its metadata
-message Task {
-  string id = 1;
-  string type = 2;
-  TaskPriority priority = 3;
-  map<string, string> payload = 4;
-  TaskStatus status = 5;
-  double progress = 6;
-  map<string, string> result = 7;
-  string error = 8;
-  google.protobuf.Timestamp created_at = 9;
-  google.protobuf.Timestamp updated_at = 10;
-  google.protobuf.Timestamp started_at = 11;
-  google.protobuf.Timestamp completed_at = 12;
-}
-
-// TaskResult represents the result of a task execution
-message TaskResult {
-  string task_id = 1;
-  TaskStatus status = 2;
-  string output = 3;
-  string error = 4;
-  int32 exit_code = 5;
-  double duration = 6; // Duration in seconds
-  map<string, string> result = 7;
-  google.protobuf.Timestamp started_at = 8;
-  google.protobuf.Timestamp completed_at = 9;
-}
-
-// ProgressUpdate represents a progress update from a running task
-message ProgressUpdate {
-  string task_id = 1;
-  double progress = 2;
-  string message = 3;
-  map<string, string> metadata = 4;
-  google.protobuf.Timestamp timestamp = 5;
-}
-
-// Event represents an event that can be sent between components
-message Event {
-  string id = 1;
-  string type = 2;
-  map<string, string> data = 3;
-  google.protobuf.Timestamp timestamp = 4;
-}
-
 // Error represents an error response
 message Error {
   string code = 1;
@@ -86,10 +21,51 @@ message HealthStatus {
   google.protobuf.Timestamp timestamp = 4;
 }
 
-// Metrics represents metrics data
-message Metrics {
-  map<string, double> counters = 1;
-  map<string, double> gauges = 2;
-  map<string, double> histograms = 3;
-  google.protobuf.Timestamp timestamp = 4;
-} 
+// TaskStatus represents the status of a task
+enum TaskStatus {
+  TASK_STATUS_UNSPECIFIED = 0;
+  TASK_STATUS_PENDING = 1;
+  TASK_STATUS_RUNNING = 2;
+  TASK_STATUS_COMPLETED = 3;
+  TASK_STATUS_FAILED = 4;
+  TASK_STATUS_CANCELED = 5;
+  TASK_STATUS_SKIPPED = 6;
+}
+
+// SpageTask represents a task with all its metadata
+message SpageTask {
+  string id = 1;
+  TaskStatus status = 2;
+  google.protobuf.Timestamp created_at = 3;
+  google.protobuf.Timestamp updated_at = 4;
+  google.protobuf.Timestamp started_at = 5;
+  google.protobuf.Timestamp completed_at = 6;
+}
+
+message TaskMetrics {
+  double duration = 1; // Duration in seconds
+  double memory_alloc = 2; // Memory allocated in bytes
+  double memory_heap = 3; // Memory heap in bytes
+  double memory_sys = 4; // Memory system in bytes
+  double memory_heap_sys = 5; // Memory heap system in bytes
+  double gc_cycles = 6; // Garbage collection cycles
+  double goroutines = 7; // Goroutines
+  double cpu_count = 8; // CPU count
+}
+
+// TaskResult represents the result of a task execution
+message TaskResult {
+  string task_id = 1;
+  TaskStatus status = 2;
+  string output = 3;
+  string error = 4;
+  TaskMetrics metrics = 5;
+  google.protobuf.Timestamp started_at = 6;
+  google.protobuf.Timestamp completed_at = 7;
+}
+
+message TaskProgressUpdate {
+  string task_id = 1;
+  TaskResult result = 2;
+  google.protobuf.Timestamp timestamp = 3;
+}

@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package spage.core;
+
+option go_package = "github.com/AlexanderGrooff/spage-protobuf/spage/core";
+
+import "google/protobuf/empty.proto";
+import "spage/core/plays.proto";
+import "spage/core/common.proto";
+
+// SpageExecution service handles communication between Spage and the Daemon
+service SpageExecution {
+  // Task execution
+  rpc ExecutePlay(ExecutePlayRequest) returns (ExecutePlayResponse);
+  rpc CancelPlay(CancelPlayRequest) returns (CancelPlayResponse);
+  rpc GetPlayStatus(GetPlayStatusRequest) returns (GetPlayStatusResponse);
+  
+  // Task registration and status updates
+  rpc RegisterPlay(RegisterPlayRequest) returns (RegisterPlayResponse);
+  
+  // Real-time progress streaming
+  rpc StreamTaskProgress(stream TaskProgressUpdate) returns (stream TaskProgressUpdate);
+  
+  // Health and metrics
+  rpc HealthCheck(google.protobuf.Empty) returns (HealthStatus);
+}
+
+// ExecutePlayRequest represents a request to execute a play
+message ExecutePlayRequest {
+  string play_id = 1;
+  string playbook = 2;
+  string inventory = 3;
+  map<string, string> variables = 4;
+  string executor = 5; // "local", "temporal", etc.
+  map<string, string> metadata = 6;
+}
+
+// ExecutePlayResponse represents the response to an execute play request
+message ExecutePlayResponse {
+  bool success = 1;
+  string play_id = 2;
+  Error error = 3;
+}
+
+// CancelPlayRequest represents a request to cancel a play
+message CancelPlayRequest {
+  string play_id = 1;
+  string reason = 2;
+}
+
+// CancelPlayResponse represents the response to a cancel play request
+message CancelPlayResponse {
+  bool success = 1;
+  Error error = 2;
+}
+
+// GetPlayStatusRequest represents a request to get play status
+message GetPlayStatusRequest {
+  string play_id = 1;
+}
+
+// GetPlayStatusResponse represents the response with play status
+message GetPlayStatusResponse {
+  SpagePlay play = 1;
+  Error error = 2;
+}
+
+// RegisterPlayRequest represents a request to register/update a play
+message RegisterPlayRequest {
+  string play_id = 1;
+  string playbook = 2;
+  string inventory = 3;
+  map<string, string> variables = 4;
+  string executor = 5;
+  map<string, string> metadata = 6;
+}
+
+// RegisterPlayResponse represents the response to a register play request
+message RegisterPlayResponse {
+  bool success = 1;
+  string play_id = 2;
+  Error error = 3;
+} 
