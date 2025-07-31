@@ -17,6 +17,7 @@ service SpageExecution {
   
   // Task registration and status updates
   rpc RegisterPlay(RegisterPlayRequest) returns (RegisterPlayResponse);
+  rpc RegisterPlayCompletion(RegisterPlayCompletionRequest) returns (RegisterPlayCompletionResponse);
   
   // Real-time progress streaming
   rpc StreamTaskProgress(stream TaskProgressUpdate) returns (stream TaskProgressUpdate);
@@ -81,3 +82,13 @@ message RegisterPlayResponse {
   string play_id = 2;
   Error error = 3;
 } 
+
+// RegisterPlayCompletionRequest represents a request to register the completion of a play
+message RegisterPlayCompletionRequest {
+  string play_id = 1;
+}
+
+message RegisterPlayCompletionResponse {
+  bool success = 1;
+  Error error = 2;
+}
