@@ -51,3 +51,5 @@ data/
 # Coverage reports
 coverage.txt
 coverage.html
+
+node_modules

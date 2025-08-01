@@ -14,14 +14,15 @@ service SpageExecution {
   rpc ExecutePlay(ExecutePlayRequest) returns (ExecutePlayResponse);
   rpc CancelPlay(CancelPlayRequest) returns (CancelPlayResponse);
   rpc GetPlayStatus(GetPlayStatusRequest) returns (GetPlayStatusResponse);
-  
+  rpc GetPlayMetrics(GetPlayMetricsRequest) returns (GetPlayMetricsResponse);
+
   // Task registration and status updates
   rpc RegisterPlay(RegisterPlayRequest) returns (RegisterPlayResponse);
   rpc RegisterPlayCompletion(RegisterPlayCompletionRequest) returns (RegisterPlayCompletionResponse);
-  
+
   // Real-time progress streaming
   rpc StreamTaskProgress(stream TaskProgressUpdate) returns (stream TaskProgressUpdate);
-  
+
   // Health and metrics
   rpc HealthCheck(google.protobuf.Empty) returns (HealthStatus);
 }
@@ -66,6 +67,17 @@ message GetPlayStatusResponse {
   Error error = 2;
 }
 
+// GetPlayMetricsRequest represents a request to get play metrics
+message GetPlayMetricsRequest {
+  string play_id = 1;
+}
+
+// GetPlayMetricsResponse represents the response with play metrics
+message GetPlayMetricsResponse {
+  PlayMetrics metrics = 1;
+  Error error = 2;
+}
+
 // RegisterPlayRequest represents a request to register/update a play
 message RegisterPlayRequest {
   string play_id = 1;
@@ -81,7 +93,7 @@ message RegisterPlayResponse {
   bool success = 1;
   string play_id = 2;
   Error error = 3;
-} 
+}
 
 // RegisterPlayCompletionRequest represents a request to register the completion of a play
 message RegisterPlayCompletionRequest {

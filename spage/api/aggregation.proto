@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package spage.api;
+
+option go_package = "github.com/AlexanderGrooff/spage-protobuf/spage/api";
+
+import "google/protobuf/empty.proto";
+import "spage/core/plays.proto";
+import "spage/core/common.proto";
+
+// SpageAggregation service handles data aggregation from daemons to the API
+service SpageAggregation {
+  // Play management
+  rpc SubmitPlay(SubmitPlayRequest) returns (SubmitPlayResponse);
+  rpc UpdatePlay(UpdatePlayRequest) returns (UpdatePlayResponse);
+
+  // Task management
+  rpc SubmitTask(SubmitTaskRequest) returns (SubmitTaskResponse);
+  rpc UpdateTask(UpdateTaskRequest) returns (UpdateTaskResponse);
+
+  // Metrics management
+  rpc SubmitPlayMetrics(SubmitPlayMetricsRequest) returns (SubmitPlayMetricsResponse);
+
+  // Health check
+  rpc HealthCheck(google.protobuf.Empty) returns (spage.core.HealthStatus);
+}
+
+// SubmitPlayRequest represents a request to submit a new play
+message SubmitPlayRequest {
+  spage.core.SpagePlay play = 1;
+}
+
+// SubmitPlayResponse represents the response to a submit play request
+message SubmitPlayResponse {
+  bool success = 1;
+  string play_id = 2;
+  spage.core.Error error = 3;
+}
+
+// UpdatePlayRequest represents a request to update an existing play
+message UpdatePlayRequest {
+  spage.core.SpagePlay play = 1;
+}
+
+// UpdatePlayResponse represents the response to an update play request
+message UpdatePlayResponse {
+  bool success = 1;
+  spage.core.Error error = 2;
+}
+
+// SubmitTaskRequest represents a request to submit a new task
+message SubmitTaskRequest {
+  string play_id = 1;
+  spage.core.SpageTask task = 2;
+}
+
+// SubmitTaskResponse represents the response to a submit task request
+message SubmitTaskResponse {
+  bool success = 1;
+  string task_id = 2;
+  spage.core.Error error = 3;
+}
+
+// UpdateTaskRequest represents a request to update an existing task
+message UpdateTaskRequest {
+  string play_id = 1;
+  spage.core.SpageTask task = 2;
+}
+
+// UpdateTaskResponse represents the response to an update task request
+message UpdateTaskResponse {
+  bool success = 1;
+  spage.core.Error error = 2;
+}
+
+// SubmitPlayMetricsRequest represents a request to submit play metrics
+message SubmitPlayMetricsRequest {
+  string play_id = 1;
+  spage.core.PlayMetrics metrics = 2;
+}
+
+// SubmitPlayMetricsResponse represents the response to a submit metrics request
+message SubmitPlayMetricsResponse {
+  bool success = 1;
+  spage.core.Error error = 2;
+}
