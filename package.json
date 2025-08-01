@@ -1,0 +1,19 @@
+{
+  "name": "spage-protobuf",
+  "version": "1.0.0",
+  "description": "Protobuf definitions for Spage with TypeScript generation",
+  "scripts": {
+    "clean": "rm -rf generated/typescript",
+    "proto:go": "make proto-go",
+    "proto:ts": "protoc --plugin=protoc-gen-ts_proto=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=generated/typescript --ts_proto_opt=esModuleInterop=true,forceLong=string,useOptionals=messages,exportCommonSymbols=false,stringEnums=true,useSnakeCase=true spage/core/*.proto spage/api/*.proto",
+    "proto": "npm run proto:go && npm run proto:ts",
+    "install-plugins": "npm install"
+  },
+  "devDependencies": {
+    "ts-proto": "^1.159.0",
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "generated/typescript"
+  ]
+}

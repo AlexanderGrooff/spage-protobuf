@@ -1,202 +1,143 @@
-# Spage Protobuf Definitions
+# Spage Protobuf
 
-This directory contains the Protocol Buffer definitions for communication between Spage ecosystem components.
+This repository contains Protocol Buffer definitions for the Spage project, along with code generation for both Go and TypeScript.
 
-## Architecture Overview
+## Overview
 
-```
-┌─────────────┐    gRPC    ┌─────────────┐    gRPC    ┌─────────────┐
-│    Spage    │◄──────────►│   Daemon    │◄──────────►│     API     │
-│   (Core)    │  execution │             │    tasks   │   (SaaS)    │
-└─────────────┘            └─────────────┘            └─────────────┘
-```
+The protobuf definitions define the communication protocol between:
 
-## Directory Structure
-
-```
-proto/
-├── spage/
-│   ├── core/           # Spage ↔ Daemon communication
-│   │   ├── common.proto    # Shared types and enums
-│   │   └── execution.proto # Task execution interface
-│   └── api/            # Daemon ↔ API communication
-│       └── tasks.proto     # Task management interface
-└── README.md
-```
-
-## Interfaces
-
-### 1. Spage ↔ Daemon (Internal Communication)
-
-**File**: `spage/core/execution.proto`
-
-**Service**: `SpageExecution`
-
-**Purpose**: Communication between Spage core engine and the daemon for task execution.
-
-**Key Operations**:
-- `ExecutePlay()` - Start a new task execution
-- `CancelTask()` - Cancel a running task
-- `GetTaskStatus()` - Get current task status
-- `StreamProgress()` - Real-time progress updates (bidirectional)
-- `HealthCheck()` - Component health status
-- `GetMetrics()` - Component metrics
-
-**Usage**: Spage processes connect to the daemon's gRPC server to report progress and receive commands.
-
-### 2. Daemon ↔ API (External Communication)
-
-**File**: `spage/api/tasks.proto`
-
-**Service**: `SpageAPI`
-
-**Purpose**: Communication between the daemon and the SaaS API for task management.
-
-**Key Operations**:
-- `SubmitTask()` - Submit a new task to the API
-- `GetTaskStatus()` - Get task status from the API
-- `CancelTask()` - Cancel a task via the API
-- `ListTasks()` - List tasks with filtering
-- `StreamEvents()` - Real-time events (bidirectional)
-- `Authenticate()` - API authentication
-- `ValidateToken()` - Token validation
-- `HealthCheck()` - API health status
-- `GetMetrics()` - API metrics
-
-**Usage**: The daemon connects to the SaaS API to receive tasks and report results.
-
-## Shared Types
-
-**File**: `spage/core/common.proto`
-
-Common types used across both interfaces:
-
-- `Task` - Complete task representation
-- `TaskStatus` - Task status enumeration
-- `TaskPriority` - Task priority enumeration
-- `TaskResult` - Task execution result
-- `ProgressUpdate` - Real-time progress updates
-- `Event` - Generic events
-- `Error` - Error responses
-- `HealthStatus` - Health check responses
-- `Metrics` - Metrics data
+- **spage-daemon**: The daemon that runs on target machines
+- **spage-api**: The centralized API server
+- **spage-web**: The web dashboard
 
 ## Code Generation
 
 ### Prerequisites
 
-Install the required protoc plugins:
+1. Install `protoc` (Protocol Buffer compiler)
+2. Install Go protobuf plugins:
+
+   ```bash
+   go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+   go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+   ```
+
+3. Install Node.js dependencies:
+
+   ```bash
+   npm install
+   ```
+
+### Generating Code
+
+#### Generate Go code only
 
 ```bash
-make install-protoc-plugins
+make proto-go
+# or
+npm run proto:go
 ```
 
-### Generate Go Code
+#### Generate TypeScript code only
+
+```bash
+make proto-ts
+# or
+npm run proto:ts
+```
+
+#### Generate both Go and TypeScript code
 
 ```bash
 make proto
+# or
+npm run proto
 ```
 
-This will generate:
-- `spage/core/*.pb.go` - Go structs and gRPC client/server code
-- `spage/api/*.pb.go` - Go structs and gRPC client/server code
+### Generated Files
 
-### Build with Generated Code
+#### Go
 
-```bash
-make build
-```
+- `spage/core/*.pb.go` - Core protobuf message types
+- `spage/api/*.pb.go` - API service definitions
 
-## Usage Examples
+#### TypeScript
 
-### Spage Process Connecting to Daemon
+- `generated/typescript/spage/core/` - Core TypeScript types
+- `generated/typescript/spage/api/` - API TypeScript types
+
+## Using Generated Types
+
+### In Go Projects
 
 ```go
 import (
-    "github.com/AlexanderGrooff/spage-daemon/spage/core"
-    "google.golang.org/grpc"
+    "github.com/AlexanderGrooff/spage-protobuf/spage/core"
+    "github.com/AlexanderGrooff/spage-protobuf/spage/api"
 )
-
-// Connect to daemon
-conn, err := grpc.Dial("localhost:9091", grpc.WithInsecure())
-if err != nil {
-    log.Fatal(err)
-}
-defer conn.Close()
-
-// Create client
-client := core.NewSpageExecutionClient(conn)
-
-// Stream progress updates
-stream, err := client.StreamProgress(context.Background())
-if err != nil {
-    log.Fatal(err)
-}
-
-// Send progress updates
-for {
-    update := &core.ProgressUpdate{
-        TaskId: "task-123",
-        Progress: 50.0,
-        Message: "Processing hosts...",
-    }
-    stream.Send(update)
-}
 ```
 
-### Daemon Connecting to API
+### In TypeScript Projects
 
-```go
-import (
-    "github.com/AlexanderGrooff/spage-daemon/spage/api"
-    "google.golang.org/grpc"
-)
-
-// Connect to API
-conn, err := grpc.Dial("api.spage.com:9090", grpc.WithInsecure())
-if err != nil {
-    log.Fatal(err)
-}
-defer conn.Close()
-
-// Create client
-client := api.NewSpageAPIClient(conn)
-
-// Submit task
-resp, err := client.SubmitTask(context.Background(), &api.SubmitTaskRequest{
-    TaskId: "task-123",
-    Type: "playbook",
-    Priority: core.TASK_PRIORITY_NORMAL,
-    Payload: map[string]string{
-        "playbook": "main.yml",
-        "inventory": "hosts.yml",
-    },
-})
+```typescript
+import { SpagePlay, PlayStatus } from '../../../spage-protobuf/generated/typescript/spage/core/plays';
+import { SpageTask, TaskStatus } from '../../../spage-protobuf/generated/typescript/spage/core/common';
 ```
 
-## Versioning
+## Development Workflow
 
-- **v1.0.0** - Initial API contracts
-- **v1.1.0** - Add metrics and health endpoints
-- **v2.0.0** - Breaking changes (if needed)
+1. **Modify protobuf files** in `spage/core/` or `spage/api/`
+2. **Regenerate code**: `make proto`
+3. **Update consuming projects** to use the new types
+4. **Test** the changes in all components
 
-## Best Practices
+## File Structure
 
-1. **Backward Compatibility**: Avoid breaking changes in existing fields
-2. **Field Numbers**: Never reuse field numbers, even if fields are removed
-3. **Default Values**: Use sensible defaults for optional fields
-4. **Documentation**: Add comprehensive comments to all messages and fields
-5. **Validation**: Implement server-side validation for all requests
-6. **Error Handling**: Use the `Error` message type for consistent error responses
-7. **Streaming**: Use bidirectional streaming for real-time communication
-8. **Authentication**: Include authentication in all external API calls
+```
+spage-protobuf/
+├── spage/
+│   ├── core/
+│   │   ├── common.proto      # Common types (Task, Error, Health)
+│   │   └── plays.proto       # Play-related types
+│   └── api/
+│       └── aggregation.proto  # API service definitions
+├── generated/
+│   └── typescript/           # Generated TypeScript types
+├── Makefile                  # Build automation
+├── package.json              # Node.js dependencies
+└── README.md                 # This file
+```
 
-## Future Enhancements
+## TypeScript Configuration
 
-- [ ] Add more granular task states
-- [ ] Support for task dependencies
-- [ ] Batch operations for multiple tasks
-- [ ] Enhanced metrics and monitoring
-- [ ] Support for different authentication methods
-- [ ] Rate limiting and throttling
-- [ ] Audit logging and compliance 
+The TypeScript generation uses `ts-proto` with the following options:
+
+- `esModuleInterop=true` - Better ES module compatibility
+- `forceLong=string` - Use strings for 64-bit integers
+- `useOptionals=messages` - Make message fields optional
+- `exportCommonSymbols=false` - Avoid naming conflicts
+- `stringEnums=true` - Use string enums instead of numeric
+
+## Contributing
+
+When adding new protobuf definitions:
+
+1. Add the new `.proto` file
+2. Update the generation commands if needed
+3. Regenerate all code: `make proto`
+4. Update this README if the structure changes
+5. Test the changes in all consuming projects
+
+## Troubleshooting
+
+### TypeScript Generation Issues
+
+- Ensure `ts-proto` is installed: `npm install`
+- Check that the output directory exists: `mkdir -p generated/typescript`
+- Verify protobuf syntax: `protoc --version`
+
+### Go Generation Issues
+
+- Ensure Go protobuf plugins are installed
+- Check that `protoc` is in your PATH
+- Verify the `go.mod` file is up to date
