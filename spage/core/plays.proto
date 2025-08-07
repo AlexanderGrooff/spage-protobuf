@@ -32,12 +32,13 @@ message SpagePlay {
   string id = 1;
   string playbook = 2;
   string inventory = 3;
-  map<string, string> variables = 4;
-  PlayStatus status = 5;
-  repeated SpageTask tasks = 6;
-  PlayMetrics metrics = 7;
-  google.protobuf.Timestamp created_at = 8;
-  google.protobuf.Timestamp updated_at = 9;
-  google.protobuf.Timestamp started_at = 10;
-  google.protobuf.Timestamp completed_at = 11;
+  string hostname = 4;
+  map<string, string> variables = 5;
+  PlayStatus status = 6;
+  repeated SpageTask tasks = 7;
+  PlayMetrics metrics = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+  google.protobuf.Timestamp started_at = 11;
+  google.protobuf.Timestamp completed_at = 12;
 }

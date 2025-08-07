@@ -7,9 +7,15 @@ option go_package = "github.com/AlexanderGrooff/spage-protobuf/spage/api";
 import "google/protobuf/empty.proto";
 import "spage/core/plays.proto";
 import "spage/core/common.proto";
+import "spage/core/playbooks.proto";
 
 // SpageAggregation service handles data aggregation from daemons to the API
 service SpageAggregation {
+  // Daemon registration
+  rpc RegisterDaemon(RegisterDaemonRequest) returns (RegisterDaemonResponse);
+  rpc UnregisterDaemon(UnregisterDaemonRequest) returns (UnregisterDaemonResponse);
+  rpc Heartbeat(HeartbeatRequest) returns (HeartbeatResponse);
+
   // Play management
   rpc SubmitPlay(SubmitPlayRequest) returns (SubmitPlayResponse);
   rpc UpdatePlay(UpdatePlayRequest) returns (UpdatePlayResponse);
@@ -23,6 +29,50 @@ service SpageAggregation {
 
   // Health check
   rpc HealthCheck(google.protobuf.Empty) returns (spage.core.HealthStatus);
+
+  // Playbook management
+  rpc GetPlaybooks(GetPlaybooksRequest) returns (GetPlaybooksResponse);
+}
+
+// RegisterDaemonRequest represents a request to register a daemon
+message RegisterDaemonRequest {
+  string daemon_id = 1;
+  string endpoint = 2;
+  string hostname = 3;
+  string version = 4;
+  map<string, string> capabilities = 5;
+}
+
+// RegisterDaemonResponse represents the response to a daemon registration request
+message RegisterDaemonResponse {
+  bool success = 1;
+  string daemon_id = 2;
+  spage.core.Error error = 3;
+}
+
+// UnregisterDaemonRequest represents a request to unregister a daemon
+message UnregisterDaemonRequest {
+  string daemon_id = 1;
+  string reason = 2;
+}
+
+// UnregisterDaemonResponse represents the response to a daemon unregistration request
+message UnregisterDaemonResponse {
+  bool success = 1;
+  spage.core.Error error = 2;
+}
+
+// HeartbeatRequest represents a heartbeat from a daemon
+message HeartbeatRequest {
+  string daemon_id = 1;
+  string status = 2;
+  map<string, string> metrics = 3;
+}
+
+// HeartbeatResponse represents the response to a heartbeat
+message HeartbeatResponse {
+  bool success = 1;
+  spage.core.Error error = 2;
 }
 
 // SubmitPlayRequest represents a request to submit a new play
@@ -83,4 +133,14 @@ message SubmitPlayMetricsRequest {
 message SubmitPlayMetricsResponse {
   bool success = 1;
   spage.core.Error error = 2;
+}
+
+// GetPlaybooksRequest represents a request to get all playbooks
+message GetPlaybooksRequest {
+  // Can be extended with pagination in the future
+}
+
+// GetPlaybooksResponse represents the response to a get playbooks request
+message GetPlaybooksResponse {
+  repeated spage.core.Playbook playbooks = 1;
 }

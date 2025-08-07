@@ -1,6 +1,8 @@
 .PHONY: help clean proto proto-go proto-ts
 
-# Default target
+# Generate both Go and TypeScript code
+proto: proto-go proto-ts
+
 help:
 	@echo "Available targets:"
 	@echo "  clean     - Clean build artifacts"
@@ -38,9 +40,6 @@ proto-ts:
 		--ts_proto_opt=esModuleInterop=true,forceLong=string,useOptionals=messages,exportCommonSymbols=false,stringEnums=true,useSnakeCase=true,snakeToCamel=false \
 		spage/core/*.proto spage/api/*.proto
 	@echo "TypeScript proto generation complete"
-
-# Generate both Go and TypeScript code
-proto: proto-go proto-ts
 
 # Install protoc plugins (run once)
 install-protoc-plugins:
