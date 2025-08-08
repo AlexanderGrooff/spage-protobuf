@@ -40,6 +40,9 @@ message SpageTask {
   google.protobuf.Timestamp updated_at = 4;
   google.protobuf.Timestamp started_at = 5;
   google.protobuf.Timestamp completed_at = 6;
+  // Optional textual output and error summary for the task
+  string output = 7;
+  string error = 8;
 }
 
 message TaskMetrics {
