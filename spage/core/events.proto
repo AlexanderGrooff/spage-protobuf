@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package spage.core;
+
+option go_package = "github.com/AlexanderGrooff/spage-protobuf/spage/core";
+
+import "google/protobuf/timestamp.proto";
+import "spage/core/plays.proto";
+import "spage/core/common.proto"; // for HealthStatus and SpageTask
+
+// Telemetry events that reference messages from plays.proto
+message PlayEvent {
+  SpagePlay play = 1;
+}
+
+message MetricsEvent {
+  string play_id = 1;
+  PlayMetrics metrics = 2;
+}
+
+message DaemonStatusEvent {
+  string daemon_id = 1;
+  HealthStatus health = 2;
+}
+
+// Log chunk reference via object store
+message LogChunkEvent {
+  string play_id = 1;
+  string task_id = 2;
+  string object_key = 3;
+  string content_type = 4; // e.g. text/plain
+  uint64 size = 5;
+  string stream = 6; // stdout or stderr
+  google.protobuf.Timestamp timestamp = 7;
+}

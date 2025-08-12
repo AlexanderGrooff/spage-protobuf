@@ -44,11 +44,7 @@ message ExecutePlayResponse {
   Error error = 3;
 }
 
-// CancelPlayRequest represents a request to cancel a play
-message CancelPlayRequest {
-  string play_id = 1;
-  string reason = 2;
-}
+// CancelPlayRequest is defined in common.proto for reuse
 
 // CancelPlayResponse represents the response to a cancel play request
 message CancelPlayResponse {

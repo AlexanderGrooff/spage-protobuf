@@ -5,6 +5,7 @@ package spage.core;
 option go_package = "github.com/AlexanderGrooff/spage-protobuf/spage/core";
 
 import "google/protobuf/timestamp.proto";
+// NOTE: Avoid importing plays.proto here to prevent circular imports.
 
 // Error represents an error response
 message Error {
@@ -71,4 +72,94 @@ message TaskProgressUpdate {
   string task_id = 1;
   TaskResult result = 2;
   google.protobuf.Timestamp timestamp = 3;
+}
+
+// ===== Messaging (Commands and Events) =====
+
+// Envelope for daemon control commands
+message CommandEnvelope {
+  string correlation_id = 1;
+  string daemon_id = 2;
+  oneof body {
+    StartSpageRequest start = 10;
+    CancelPlayRequest cancel = 11;
+    PingRequest ping = 12;
+  }
+}
+
+message StartSpageRequest {
+  string play_id = 1;
+  string playbook = 2;
+  string inventory = 3;
+  map<string, string> variables = 4;
+}
+
+message CancelPlayRequest {
+  string play_id = 1;
+  string reason = 2;
+}
+
+message PingRequest {}
+
+message CommandResultEvent {
+  string correlation_id = 1;
+  string verb = 2; // start, cancel, ping
+  string play_id = 3;
+  bool success = 4;
+  string error = 5;
+  google.protobuf.Timestamp timestamp = 6;
+}
+
+// Telemetry events (task-level; play/metrics events are in events.proto to avoid cycles)
+message TaskEvent {
+  string play_id = 1;
+  SpageTask task = 2;
+}
+
+// Enrollment over NATS
+message EnrollRequest {
+  string daemon_id = 1;
+  string hostname = 2;
+  string version = 3;
+  map<string, string> capabilities = 4;
+}
+
+message EnrollReply {
+  bool success = 1;
+  string error = 2;
+  // NATS creds content (JWT + NKey seed), PEM-like blocks
+  string creds = 3;
+}
+
+// ===== Device Code Enrollment (OAuth-style) =====
+enum DeviceEnrollStatus {
+  DEVICE_ENROLL_PENDING = 0;
+  DEVICE_ENROLL_APPROVED = 1;
+  DEVICE_ENROLL_DENIED = 2;
+  DEVICE_ENROLL_EXPIRED = 3;
+}
+
+message DeviceEnrollBeginRequest {
+  string hostname = 1;
+  string version = 2;
+}
+
+message DeviceEnrollBeginReply {
+  string device_code = 1;                 // secret for polling
+  string user_code = 2;                   // human-friendly code to enter in browser
+  string verification_uri = 3;            // base URL where user enters the code
+  string verification_uri_complete = 4;   // full URL with code embedded (optional)
+  int32 expires_in = 5;                   // seconds
+  int32 interval = 6;                     // recommended poll interval seconds
+}
+
+message DeviceEnrollPollRequest {
+  string device_code = 1;
+}
+
+message DeviceEnrollPollReply {
+  DeviceEnrollStatus status = 1;
+  string error = 2;
+  string daemon_id = 3;
+  string creds = 4; // NATS creds when approved
 }
