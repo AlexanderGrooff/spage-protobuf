@@ -41,4 +41,6 @@ message SpagePlay {
   google.protobuf.Timestamp updated_at = 10;
   google.protobuf.Timestamp started_at = 11;
   google.protobuf.Timestamp completed_at = 12;
+  // Optional play-level error if the play failed
+  string error = 13;
 }

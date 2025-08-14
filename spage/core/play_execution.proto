@@ -30,11 +30,15 @@ service SpageExecution {
 // ExecutePlayRequest represents a request to execute a play
 message ExecutePlayRequest {
   string play_id = 1;
-  string playbook = 2;
+  string playbook = 2; // If set to spage://bundle/<id>#<root> daemon/CLI will fetch bundle
   string inventory = 3;
   map<string, string> variables = 4;
   string executor = 5; // "local", "temporal", etc.
   map<string, string> metadata = 6;
+
+  // Optional explicit bundle parameters (preferred long-term over playbook URI)
+  string bundle_id = 7;
+  string bundle_root_path = 8;
 }
 
 // ExecutePlayResponse represents the response to an execute play request
@@ -82,6 +86,9 @@ message RegisterPlayRequest {
   map<string, string> variables = 4;
   string executor = 5;
   map<string, string> metadata = 6;
+  // Optional explicit bundle parameters
+  string bundle_id = 7;
+  string bundle_root_path = 8;
 }
 
 // RegisterPlayResponse represents the response to a register play request
@@ -91,9 +98,13 @@ message RegisterPlayResponse {
   Error error = 3;
 }
 
-// RegisterPlayCompletionRequest represents a request to register the completion of a play
+// RegisterPlayCompletionRequest represents a request to register the final status of a play
 message RegisterPlayCompletionRequest {
   string play_id = 1;
+  // Optional final status of the play. If unspecified, defaults to COMPLETED
+  PlayStatus status = 2;
+  // Optional error message when status is FAILED or CANCELED
+  string error = 3;
 }
 
 message RegisterPlayCompletionResponse {

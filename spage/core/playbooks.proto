@@ -14,4 +14,6 @@ message Playbook {
   string content = 4;
   google.protobuf.Timestamp created_at = 5;
   google.protobuf.Timestamp updated_at = 6;
+  // Optional pointer to the current bundle associated with this playbook
+  string current_bundle_id = 7;
 }
