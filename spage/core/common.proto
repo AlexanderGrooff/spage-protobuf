@@ -5,6 +5,7 @@ package spage.core;
 option go_package = "github.com/AlexanderGrooff/spage-protobuf/spage/core";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
 // NOTE: Avoid importing plays.proto here to prevent circular imports.
 
 // Error represents an error response
@@ -92,6 +93,8 @@ message StartSpageRequest {
   string playbook = 2;
   string inventory = 3;
   map<string, string> variables = 4;
+  // Optional runtime configuration to control Spage behavior
+  SpageRunConfig config = 5;
 }
 
 message CancelPlayRequest {
@@ -114,6 +117,59 @@ message CommandResultEvent {
 message TaskEvent {
   string play_id = 1;
   SpageTask task = 2;
+}
+
+// ===== Run-time configuration passed with StartSpageRequest =====
+message LoggingConfig {
+  string level = 1;
+  string file = 2;
+  string format = 3; // "json" | "yaml" | "plain"
+  bool timestamps = 4;
+}
+
+message TemporalConfig {
+  string address = 1;
+  string task_queue = 2;
+  string workflow_id_prefix = 3;
+  bool trigger = 4;
+}
+
+message APIConfig {
+  string http_base = 1;
+}
+
+message DaemonConfig {
+  bool enabled = 1;
+  string endpoint = 2;
+  string play_id = 3;
+  int64 timeout_ms = 4; // duration in milliseconds
+}
+
+message TagsConfig {
+  repeated string tags = 1;
+  repeated string skip_tags = 2;
+}
+
+message PrivilegeEscalationConfig {
+  bool use_interactive = 1; // -Su vs -u
+  string become_flags = 2;  // additional flags
+}
+
+message SpageRunConfig {
+  LoggingConfig logging = 1;
+  string execution_mode = 2; // "parallel" | "sequential"
+  string executor = 3;       // "local" | "temporal"
+  TemporalConfig temporal = 4;
+  APIConfig api = 5;
+  DaemonConfig daemon = 6;
+  bool revert = 7;
+  TagsConfig tags = 8;
+  google.protobuf.Struct facts = 9; // arbitrary key/value facts
+  bool host_key_checking = 10;
+  string roles_path = 11;           // colon-delimited
+  string inventory = 12;            // optional override
+  PrivilegeEscalationConfig privilege_escalation = 13;
+  string api_token = 14;            // bearer token for CLI auth
 }
 
 // Enrollment over NATS
