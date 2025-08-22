@@ -36,15 +36,16 @@ enum TaskStatus {
 
 // SpageTask represents a task with all its metadata
 message SpageTask {
-  string id = 1;
-  TaskStatus status = 2;
-  google.protobuf.Timestamp created_at = 3;
-  google.protobuf.Timestamp updated_at = 4;
-  google.protobuf.Timestamp started_at = 5;
-  google.protobuf.Timestamp completed_at = 6;
+  int32 id = 1;
+  string name = 2;
+  TaskStatus status = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+  google.protobuf.Timestamp started_at = 6;
+  google.protobuf.Timestamp completed_at = 7;
   // Optional textual output and error summary for the task
-  string output = 7;
-  string error = 8;
+  string output = 8;
+  string error = 9;
 }
 
 message TaskMetrics {
@@ -60,19 +61,22 @@ message TaskMetrics {
 
 // TaskResult represents the result of a task execution
 message TaskResult {
-  string task_id = 1;
-  TaskStatus status = 2;
-  string output = 3;
-  string error = 4;
-  TaskMetrics metrics = 5;
-  google.protobuf.Timestamp started_at = 6;
-  google.protobuf.Timestamp completed_at = 7;
+  int32 task_id = 1;
+  string task_name = 2;
+  TaskStatus status = 3;
+  string output = 4;
+  string error = 5;
+  TaskMetrics metrics = 6;
+  google.protobuf.Timestamp started_at = 7;
+  google.protobuf.Timestamp completed_at = 8;
 }
 
 message TaskProgressUpdate {
-  string task_id = 1;
-  TaskResult result = 2;
-  google.protobuf.Timestamp timestamp = 3;
+  string play_id = 1;
+  int32 task_id = 2;
+  string task_name = 3;
+  TaskResult result = 4;
+  google.protobuf.Timestamp timestamp = 5;
 }
 
 // ===== Messaging (Commands and Events) =====

@@ -13,7 +13,6 @@ help:
 # Clean build artifacts
 clean:
 	rm -rf spage/core/*.pb.go
-	rm -rf spage/api/*.pb.go
 	rm -rf generated/typescript
 
 # Generate Go code from protobuf files
@@ -22,9 +21,6 @@ proto-go:
 	protoc --go_out=. --go_opt=paths=source_relative \
 		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
 		spage/core/*.proto
-	protoc --go_out=. --go_opt=paths=source_relative \
-		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
-		spage/api/*.proto
 	@echo "Go proto generation complete"
 
 # Generate TypeScript code from protobuf files
@@ -38,7 +34,7 @@ proto-ts:
 	protoc --plugin=protoc-gen-ts_proto=./node_modules/.bin/protoc-gen-ts_proto \
 		--ts_proto_out=generated/typescript \
 		--ts_proto_opt=esModuleInterop=true,forceLong=string,useOptionals=messages,exportCommonSymbols=false,stringEnums=true,useSnakeCase=true,snakeToCamel=false \
-		spage/core/*.proto spage/api/*.proto
+		spage/core/*.proto
 	@echo "TypeScript proto generation complete"
 
 # Install protoc plugins (run once)

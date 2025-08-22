@@ -26,7 +26,7 @@ message DaemonStatusEvent {
 // Log chunk reference via object store
 message LogChunkEvent {
   string play_id = 1;
-  string task_id = 2;
+  int32 task_id = 2;
   string object_key = 3;
   string content_type = 4; // e.g. text/plain
   uint64 size = 5;
