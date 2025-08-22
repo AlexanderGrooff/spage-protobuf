@@ -14,7 +14,6 @@ service SpageExecution {
   rpc ExecutePlay(ExecutePlayRequest) returns (ExecutePlayResponse);
   rpc CancelPlay(CancelPlayRequest) returns (CancelPlayResponse);
   rpc GetPlayStatus(GetPlayStatusRequest) returns (GetPlayStatusResponse);
-  rpc GetPlayMetrics(GetPlayMetricsRequest) returns (GetPlayMetricsResponse);
 
   // Task registration and status updates
   rpc RegisterPlay(RegisterPlayRequest) returns (RegisterPlayResponse);
@@ -64,17 +63,6 @@ message GetPlayStatusRequest {
 // GetPlayStatusResponse represents the response with play status
 message GetPlayStatusResponse {
   SpagePlay play = 1;
-  Error error = 2;
-}
-
-// GetPlayMetricsRequest represents a request to get play metrics
-message GetPlayMetricsRequest {
-  string play_id = 1;
-}
-
-// GetPlayMetricsResponse represents the response with play metrics
-message GetPlayMetricsResponse {
-  PlayMetrics metrics = 1;
   Error error = 2;
 }
 

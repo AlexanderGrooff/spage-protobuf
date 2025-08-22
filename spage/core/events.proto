@@ -13,11 +13,6 @@ message PlayEvent {
   SpagePlay play = 1;
 }
 
-message MetricsEvent {
-  string play_id = 1;
-  PlayMetrics metrics = 2;
-}
-
 message DaemonStatusEvent {
   string daemon_id = 1;
   HealthStatus health = 2;

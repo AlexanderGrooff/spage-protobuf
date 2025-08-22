@@ -17,16 +17,6 @@ enum PlayStatus {
   PLAY_STATUS_CANCELED = 5;
 }
 
-message PlayMetrics {
-  int32 total_tasks = 1;
-  int32 completed_tasks = 2;
-  int32 failed_tasks = 3;
-  int32 canceled_tasks = 4;
-  int32 skipped_tasks = 5;
-  int32 pending_tasks = 6;
-  int32 running_tasks = 7;
-}
-
 // SpagePlay represents a play with all its metadata
 message SpagePlay {
   string id = 1;
@@ -36,11 +26,10 @@ message SpagePlay {
   map<string, string> variables = 5;
   PlayStatus status = 6;
   repeated SpageTask tasks = 7;
-  PlayMetrics metrics = 8;
-  google.protobuf.Timestamp created_at = 9;
-  google.protobuf.Timestamp updated_at = 10;
-  google.protobuf.Timestamp started_at = 11;
-  google.protobuf.Timestamp completed_at = 12;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+  google.protobuf.Timestamp started_at = 10;
+  google.protobuf.Timestamp completed_at = 11;
   // Optional play-level error if the play failed
-  string error = 13;
+  string error = 12;
 }
