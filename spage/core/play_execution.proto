@@ -5,6 +5,7 @@ package spage.core;
 option go_package = "github.com/AlexanderGrooff/spage-protobuf/spage/core";
 
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 import "spage/core/plays.proto";
 import "spage/core/common.proto";
 
@@ -21,6 +22,7 @@ service SpageExecution {
 
   // Real-time progress streaming
   rpc StreamTaskProgress(stream TaskProgressUpdate) returns (stream TaskProgressUpdate);
+  rpc StreamPlayProgress(stream PlayProgressUpdate) returns (stream PlayProgressUpdate);
 
   // Health and metrics
   rpc HealthCheck(google.protobuf.Empty) returns (HealthStatus);
@@ -98,4 +100,13 @@ message RegisterPlayCompletionRequest {
 message RegisterPlayCompletionResponse {
   bool success = 1;
   Error error = 2;
+}
+
+// PlayProgressUpdate represents a play-level progress update
+message PlayProgressUpdate {
+  string play_id = 1;
+  PlayStatus status = 2;
+  string error = 3;
+  string output = 4;
+  google.protobuf.Timestamp timestamp = 5;
 }
