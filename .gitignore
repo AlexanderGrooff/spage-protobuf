@@ -18,10 +18,6 @@ spage-daemon
 # Go workspace file
 go.work
 
-# Generated protobuf files
-*.pb.go
-*_grpc.pb.go
-
 # Build artifacts
 build/
 dist/
