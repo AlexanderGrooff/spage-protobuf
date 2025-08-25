@@ -4,11 +4,7 @@ This repository contains Protocol Buffer definitions for the Spage project, alon
 
 ## Overview
 
-The protobuf definitions define the communication protocol between:
-
-- **spage-daemon**: The daemon that runs on target machines
-- **spage-api**: The centralized API server
-- **spage-web**: The web dashboard
+The protobuf definitions define the communication protocol between Spage components
 
 ## Code Generation
 
@@ -59,12 +55,10 @@ npm run proto
 #### Go
 
 - `spage/core/*.pb.go` - Core protobuf message types
-- `spage/api/*.pb.go` - API service definitions
 
 #### TypeScript
 
 - `generated/typescript/spage/core/` - Core TypeScript types
-- `generated/typescript/spage/api/` - API TypeScript types
 
 ## Using Generated Types
 
@@ -73,7 +67,6 @@ npm run proto
 ```go
 import (
     "github.com/AlexanderGrooff/spage-protobuf/spage/core"
-    "github.com/AlexanderGrooff/spage-protobuf/spage/api"
 )
 ```
 
@@ -86,7 +79,7 @@ import { SpageTask, TaskStatus } from '../../../spage-protobuf/generated/typescr
 
 ## Development Workflow
 
-1. **Modify protobuf files** in `spage/core/` or `spage/api/`
+1. **Modify protobuf files** in `spage/core/`
 2. **Regenerate code**: `make proto`
 3. **Update consuming projects** to use the new types
 4. **Test** the changes in all components
@@ -99,8 +92,6 @@ spage-protobuf/
 │   ├── core/
 │   │   ├── common.proto      # Common types (Task, Error, Health)
 │   │   └── plays.proto       # Play-related types
-│   └── api/
-│       └── aggregation.proto  # API service definitions
 ├── generated/
 │   └── typescript/           # Generated TypeScript types
 ├── Makefile                  # Build automation
